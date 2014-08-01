@@ -114,12 +114,14 @@ endfunc "}}}
 " Add Indent Tags: {{{
 if !exists("s:indent_tags")
     let s:indent_tags = {}
+    let s:indent_tags['{{#'] = 1
+    let s:indent_tags['{{/'] = -1
 endif
 
 " old tags:
 call s:AddITags(['a', 'abbr', 'acronym', 'address', 'b', 'bdo', 'big',
     \ 'blockquote', 'button', 'caption', 'center', 'cite', 'code', 'colgroup',
-    \ 'del', 'dfn', 'dir', 'div', 'dl', 'em', 'fieldset', 'font', 'form',
+    \ 'del', 'dfn', 'dir', 'div', 'dl', 'em', 'fieldset', 'font', 'form', 'li',
     \ 'frameset', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'i', 'iframe', 'ins', 'kbd',
     \ 'label', 'legend', 'map', 'menu', 'noframes', 'noscript', 'object', 'ol',
     \ 'optgroup', 'q', 's', 'samp', 'select', 'small', 'span', 'strong', 'sub',
@@ -148,9 +150,12 @@ func! s:CountITags(...) "{{{
     " relative indent steps for next line [unit &sw]:
     let s:nextrel = 0
 
+    " add handlebars open and close tags to the match string
+    let tagstring = '<\zs\/\=\w\+\>\|<!--\|-->\|{{#\|{{\/'
+
     if a:0==0
 	let s:block = s:newstate.block
-	let tmpline = substitute(s:curline, '<\zs\/\=\w\+\>\|<!--\|-->', '\=s:CheckTag(submatch(0))', 'g')
+	let tmpline = substitute(s:curline, tagstring, '\=s:CheckTag(submatch(0))', 'g')
 	if s:block == 3
 	    let s:newstate.scripttype = s:GetScriptType(matchstr(tmpline, '\C.*<SCRIPT\>\zs[^>]*'))
 	endif
@@ -158,12 +163,13 @@ func! s:CountITags(...) "{{{
     else
 	let s:block = 0		" assume starting outside of a block
 	let s:countonly = 1	" don't change state
-	let tmpline = substitute(s:altline, '<\zs\/\=\w\+\>\|<!--\|-->', '\=s:CheckTag(submatch(0))', 'g')
+	let tmpline = substitute(s:altline, tagstring, '\=s:CheckTag(submatch(0))', 'g')
 	let s:countonly = 0
     endif
 endfunc "}}}
 func! s:CheckTag(itag) "{{{
-    " "tag" or "/tag" or "<!--" or "-->"
+    " "tag" or "/tag" or "<!--" or "-->" or "{{#" or "{{/"
+
     let ind = get(s:indent_tags, a:itag)
     if ind == -1
 	" closing tag
@@ -439,7 +445,7 @@ func! HtmlIndent() "{{{
     let s:newstate.lnum = v:lnum
 
     " does the line start with a closing tag?
-    let swendtag = match(s:curline, '^\s*</') >= 0
+    let swendtag = match(s:curline, '^\s*</\|^\s*{{\/') >= 0
 
     if prevnonblank(v:lnum-1) == b:indent.lnum && s:usestate
 	" use state (continue from previous line)
