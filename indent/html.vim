@@ -1,24 +1,13 @@
-" Vim indent script for HTML
+" Vim indent script for HTML with handlebars support.
 " General: "{{{
 " File:		html.vim (Vimscript #2075)
-" Author:	Andy Wokula <anwoku@yahoo.de>
-" Last Change:	2013 Jun 12
-" Rev Days:     13
-" Version:	0.9
+" Author:	Chris Westra
 " Vim Version:	Vim7
 " Description:
-"   Improved version of the distributed html indent script, faster on a
-"   range of lines.
+"   Fork of default vim indent file with handlebars support.
 "
 " Credits:
-"	indent/html.vim (2006 Jun 05) from J. Zellner
-"	indent/css.vim (2006 Dec 20) from N. Weibull
-"
-" History:
-" 2012 Oct 21	(v0.9) added support for shiftwidth()
-" 2011 Sep 09	(v0.8) added HTML5 tags (thx to J. Zuckerman)
-" 2008 Apr 28	(v0.6) revised customization
-" 2008 Mar 09	(v0.5) fixed 'indk' issue (thx to C.J. Robinson)
+"	indent/html.vim (Vimscript #2075) from A. Wokula
 " }}}
 
 " Init Folklore, check user settings (2nd time ++) "{{{
